@@ -327,7 +327,7 @@ split
 		
 		if (total_distance_square < collided_distance_epsilon_square)
 		{
-			print("Collided with finish tile at position = { " + current.player_pos_x + ", " + current.player_pos_y + "}, at Distance = " + Math.Sqrt(total_distance_square) + ", Epsilon = " + Math.Sqrt(collided_distance_epsilon_square));
+			//print("Collided with finish tile at position = { " + current.player_pos_x + ", " + current.player_pos_y + "}, at Distance = " + Math.Sqrt(total_distance_square) + ", Epsilon = " + Math.Sqrt(collided_distance_epsilon_square));
 			
 			return true;
 		}
