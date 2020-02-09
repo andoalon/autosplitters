@@ -1,7 +1,7 @@
 state("World of Traps")
 {
 	uint level_id : 0x0001CA44, 0x40;
-	int lives : 0x000103F8, 0x4;
+	//int lives : 0x000103F8, 0x4;
 	
 	// I'm not sure why but if I remove
 	// the 0 offset from the variable below
@@ -9,34 +9,41 @@ state("World of Traps")
 	// The amount of frames that have elapsed
 	// since the beginning of the game
 	// (gets paused if the game is paused)
-	int frame_counter : 0x000111F8, 0x0;
+	//int frame_counter : 0x000111F8, 0x0;
 	
 	float player_pos_x : 0x00028C88, 0x28;
 	float player_pos_y : 0x00028C88, 0x2C;
 }
 
-init
+startup
 {
-	// world 0 level 0 = Main Menu
-	int world = 0;
-	int level = 0;
+	print("World of Traps autosplitter by andoalon. Version: 1.1");
 }
 
-update
+init
 {
-	print("level_id = " + current.level_id);
-	//print("lives = " + current.lives);
-	//print("frame_counter = " + current.frame_counter);
-	print("player_pos = {" + current.player_pos_x + ", " + current.player_pos_y + "}");
+	vars.current_level_index = 0;
+
+	vars.level_ids = new int[]{
+		0, // Main menu
+		11 /* 1-1 */, 13 /* 1-2 */, 14 /* 1-3 */, 15 /* 1-4 */, 20 /* 1-5 */,
+		21 /* 2-1 */, 23 /* 2-2 */, 24 /* 2-3 */, 25 /* 2-4 */, 30 /* 2-5 */,
+		31 /* 3-1 */, 33 /* 3-2 */, 34 /* 3-3 */, 71 /* 3-4 */, 70 /* "Easiest Level in Game" */, 35 /* "That Level was Easy" */, 40 /* 3-5 */,
+		41 /* 4-1 */, 43 /* 4-2 */, 44 /* 4-3 */, 45 /* 4-4 */, 50 /* 4-5 */,
+		51 /* 5-1 */, 53 /* 5-2 */, 54 /* 5-3 */, 55 /* 5-4 */, 60 /* 5-5 */,
+		61 /* 6-1 */, 63 /* 6-2 */, 64 /* 6-3 */, 65 /* 6-4 */, 73 /* 6-5 */
+	};
 }
 
 start
 {
-	// level_id 0 = Main menu
-	if(old.level_id == 0 && current.level_id == 11)
+	const int main_menu_level_id = 0;
+	const int level_1_1_id = 11;
+
+	if(old.level_id == main_menu_level_id && current.level_id == level_1_1_id)
 	{
-		vars.world = 1;
-		vars.level = 1;
+		//print("[start]: current_level_index = " + vars.current_level_index);
+		vars.current_level_index = 1;
 		
 		return true;
 	}
@@ -49,255 +56,18 @@ split
 	// to the next level. At least they cannot go directly
 	// to the last level as this script forces you to follow
 	// the order
-	if(old.level_id == 11 && current.level_id == 13)
-	{
-		vars.world = 1;
-		vars.level = 2;
-		
-		return true;
-	}
+	int current_level_index = 0;
 	
-	if(old.level_id == 13 && current.level_id == 14)
+	if (vars.current_level_index < vars.level_ids.Length - 1)
 	{
-		vars.world = 1;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 14 && current.level_id == 15)
-	{
-		vars.world = 1;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 15 && current.level_id == 20)
-	{
-		vars.world = 1;
-		vars.level = 5;
-		
-		return true;
-	}
-	
-	if(old.level_id == 20 && current.level_id == 21)
-	{
-		vars.world = 2;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 21 && current.level_id == 23)
-	{
-		vars.world = 2;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 23 && current.level_id == 24)
-	{
-		vars.world = 2;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 24 && current.level_id == 25)
-	{
-		vars.world = 2;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 25 && current.level_id == 30)
-	{
-		vars.world = 2;
-		vars.level = 5;
-		
-		return true;
-	}
-	
-	if(old.level_id == 30 && current.level_id == 31)
-	{
-		vars.world = 3;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 31 && current.level_id == 33)
-	{
-		vars.world = 3;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 33 && current.level_id == 34)
-	{
-		vars.world = 3;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 34 && current.level_id == 71)
-	{
-		vars.world = 3;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 71 && current.level_id == 70)
-	{
-		// "Easiest Level in Game" (last level copy)"
-		vars.world = 0;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 70 && current.level_id == 35)
-	{
-		// "That Level was Easy" (first level copy -- restart troll)"
-		vars.world = 0;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 35 && current.level_id == 40)
-	{
-		vars.world = 3;
-		vars.level = 5;
-		
-		return true;
-	}
-	
-	if(old.level_id == 40 && current.level_id == 41)
-	{
-		vars.world = 4;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 41 && current.level_id == 43)
-	{
-		vars.world = 4;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 43 && current.level_id == 44)
-	{
-		vars.world = 4;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 44 && current.level_id == 45)
-	{
-		vars.world = 4;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 45 && current.level_id == 50)
-	{
-		vars.world = 4;
-		vars.level = 5;
-		
-		return true;
-	}
-	
-	if(old.level_id == 50 && current.level_id == 51)
-	{
-		vars.world = 5;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 51 && current.level_id == 53)
-	{
-		vars.world = 5;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 53 && current.level_id == 54)
-	{
-		vars.world = 5;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 54 && current.level_id == 55)
-	{
-		vars.world = 5;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 55 && current.level_id == 60)
-	{
-		vars.world = 5;
-		vars.level = 5;
-		
-		return true;
-	}
-	
-	if(old.level_id == 60 && current.level_id == 61)
-	{
-		vars.world = 6;
-		vars.level = 1;
-		
-		return true;
-	}
-	
-	if(old.level_id == 61 && current.level_id == 63)
-	{
-		vars.world = 6;
-		vars.level = 2;
-		
-		return true;
-	}
-	
-	if(old.level_id == 63 && current.level_id == 64)
-	{
-		vars.world = 6;
-		vars.level = 3;
-		
-		return true;
-	}
-	
-	if(old.level_id == 64 && current.level_id == 65)
-	{
-		vars.world = 6;
-		vars.level = 4;
-		
-		return true;
-	}
-	
-	if(old.level_id == 65 && current.level_id == 73)
-	{
-		// Final level
-		vars.world = 6;
-		vars.level = 5;
-		
-		return true;
+		if (current.level_id == vars.level_ids[vars.current_level_index + 1]
+			 && old.level_id == vars.level_ids[vars.current_level_index])
+		{
+			//print("[split]: current_level_index = " + vars.current_level_index + " (and now +1)");
+
+			++vars.current_level_index;
+			return true;
+		}
 	}
 	
 	// Need a way to detect the user is
@@ -308,8 +78,8 @@ split
 	// to the position of the 'finish' tile in the last level
 	if (current.level_id == 73) // Final level
 	{
-		const float world_6_5_finish_pos_x = 75.0f;
-		const float world_6_5_finish_pos_y = 135.0f;
+		const float level_6_5_finish_pos_x = 75.0f;
+		const float level_6_5_finish_pos_y = 135.0f;
 		
 		const float tile_size = 30.0f;
 		
@@ -318,8 +88,8 @@ split
 		const float collided_distance_epsilon_square = collided_distance_epsilon * collided_distance_epsilon;
 		
 		
-		float distance_x = current.player_pos_x - world_6_5_finish_pos_x;
-		float distance_y = current.player_pos_y - world_6_5_finish_pos_y;
+		float distance_x = current.player_pos_x - level_6_5_finish_pos_x;
+		float distance_y = current.player_pos_y - level_6_5_finish_pos_y;
 		
 		float total_distance_square = distance_x * distance_x + distance_y * distance_y;
 		
@@ -336,12 +106,13 @@ split
 
 reset
 {
-	// level_id 0 = Main menu
-	if(current.level_id == 0)
-	{
-		vars.world = 0;
-		vars.level = 0;
-		
+	const int main_menu_level_id = 0;
+
+	if(current.level_id == main_menu_level_id)
+	{		
+		vars.current_level_index = 0;
+		//print("[reset]: current_level_index = " + vars.current_level_index);
+
 		return true;
 	}
 }
